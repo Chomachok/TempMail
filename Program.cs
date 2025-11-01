@@ -1,6 +1,15 @@
+using TempMail.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+    options.Cookie.Name = ".TempMail.Session";
+});
 
 var app = builder.Build();
 
@@ -11,10 +20,14 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+app.UseSession();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthorization();
+
+var reciver = new EmailReceiver();
+reciver.ReciveEmails();
 
 app.MapControllerRoute(
     name: "default",

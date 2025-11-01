@@ -24,40 +24,92 @@
                         </div>
                     </div>
 
-                    <!-- Email Controls -->
-                    <div class="email-controls">
-                        <button class="btn btn-primary" id="generate-btn">
-                            <span class="btn-icon">🔄</span>
-                            <span>Создать email</span>
-                        </button>
-                        <button class="btn btn-outline" id="copy-btn">
-                            <span class="btn-icon">📋</span>
-                            <span>Копировать</span>
-                        </button>
-                        <button class="btn btn-outline" id="refresh-btn">
-                            <span class="btn-icon">🔄</span>
-                            <span>Обновить</span>
-                        </button>
-                    </div>
+                    @using (Html.BeginForm("GenerateEmail", "Home", FormMethod.Post, new { @class = "email-section" }))
+                    {
+                        <!-- Email Controls -->
+                        <div class="email-controls">
+                            @if (string.IsNullOrEmpty(ViewData["Email"]?.ToString()))
+                            {
+                                <button class="btn btn-primary" id="generate-btn" type="submit" name="action" value="generate">
+                                    <span class="btn-icon">🔄</span>
+                                    <span>Создать email</span>
+                                </button>
+                                
+                                <!-- Скрытые кнопки, когда email не создан -->
+                                <button class="btn btn-outline" type="button" disabled style="opacity: 0.5;">
+                                    <span class="btn-icon">📋</span>
+                                    <span>Копировать</span>
+                                </button>
+                                <button class="btn btn-outline" type="button" disabled style="opacity: 0.5;">
+                                    <span class="btn-icon">🔄</span>
+                                    <span>Обновить</span>
+                                </button>
+                            }
+                            else
+                            {
+                                <!-- Когда email создан, показываем активные кнопки -->
+                                <button class="btn btn-outline" type="submit" formaction="@Url.Action("RefreshEmail")">
+                                    <span class="btn-icon">🔄</span>
+                                    <span>Обновить email</span>
+                                </button>
+                                
+                                <button class="btn btn-outline" type="button" onclick="copyEmail()">
+                                    <span class="btn-icon">📋</span>
+                                    <span>Копировать</span>
+                                </button>
+                                
+                                <button class="btn btn-outline" type="submit" formaction="@Url.Action("ResetEmail")">
+                                    <span class="btn-icon">🗑️</span>
+                                    <span>Удалить</span>
+                                </button>
+                            }
+                        </div>
 
-                    <!-- Email Display -->
-                    <div class="email-display">
-                        <div class="email-input-group">
-                            <label for="email-address" class="email-label">Ваш временный email:</label>
-                            <div class="email-input-wrapper">
-                                <input type="text" class="email-address" id="email-address" 
-                                       readonly placeholder="Нажмите 'Создать email' для начала"
-                                       value="@ViewData["Email"]">
+                        <!-- Email Display -->
+                        <div class="email-display">
+                            <div class="email-input-group">
+                                <label for="email-address" class="email-label">Ваш временный email:</label>
+                                <div class="email-input-wrapper">
+                                    @if (string.IsNullOrEmpty(ViewData["Email"]?.ToString()))
+                                    {
+                                        <input type="text" class="email-address" id="email-address" 
+                                               readonly placeholder="Нажмите 'Создать email' для начала"
+                                               value="">
+                                    }
+                                    else
+                                    {
+                                        <input type="text" class="email-address" id="email-address" 
+                                               readonly value="@ViewData["Email"]">
+                                    }
+                                </div>
                             </div>
+                            
+                            @if (ViewData["ShowTimer"] as bool? == true)
+                            {
+                                <div class="timer-container">
+                                    <div class="timer" id="timer">
+                                        <span class="timer-icon">⏰</span>
+                                        <span class="timer-text">Email</span>
+                                    </div>
+                                    <div class="timer-label">Время обновляется при перезагрузке</div>
+                                </div>
+                            }
                         </div>
-                        <div class="timer-container">
-                            <div class="timer" id="timer">
-                                <span class="timer-icon">⏰</span>
-                                <span class="timer-text">10:00</span>
-                            </div>
-                            <div class="timer-label">Осталось времени</div>
-                        </div>
-                    </div>
+                    }
+
+                    <!-- Минимальный JS только для копирования -->
+                    <script>
+                    function copyEmail() {
+                        const emailInput = document.getElementById('email-address');
+                        navigator.clipboard.writeText(emailInput.value)
+                            .then(() => {
+                                alert('Email скопирован в буфер обмена!');
+                            })
+                            .catch(err => {
+                                alert('Ошибка при копировании');
+                            });
+                    }
+                    </script>
 
                     <!-- Inbox -->
                     <div class="inbox-section">

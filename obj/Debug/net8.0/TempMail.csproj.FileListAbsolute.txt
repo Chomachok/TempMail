@@ -28,3 +28,11 @@
 /Users/user/Documents/Study/TempMail/obj/Debug/net8.0/TempMail.pdb
 /Users/user/Documents/Study/TempMail/obj/Debug/net8.0/TempMail.genruntimeconfig.cache
 /Users/user/Documents/Study/TempMail/obj/Debug/net8.0/ref/TempMail.dll
+/Users/user/Documents/Study/TempMail/obj/Debug/net8.0/TempMail.sourcelink.json
+/Users/user/Documents/Study/TempMail/bin/Debug/net8.0/BouncyCastle.Cryptography.dll
+/Users/user/Documents/Study/TempMail/bin/Debug/net8.0/MailKit.dll
+/Users/user/Documents/Study/TempMail/bin/Debug/net8.0/MimeKit.dll
+/Users/user/Documents/Study/TempMail/bin/Debug/net8.0/System.Security.Cryptography.Pkcs.dll
+/Users/user/Documents/Study/TempMail/bin/Debug/net8.0/runtimes/win/lib/net8.0/System.Security.Cryptography.Pkcs.dll
+/Users/user/Documents/Study/TempMail/obj/Debug/net8.0/TempMail.csproj.AssemblyReference.cache
+/Users/user/Documents/Study/TempMail/obj/Debug/net8.0/TempMail.csproj.Up2Date
