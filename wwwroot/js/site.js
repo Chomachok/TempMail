@@ -210,7 +210,7 @@
         if (this.currentEmail) {
             emailInput.value = this.currentEmail;
         } else {
-            emailInput.value = 'Нажмите "Создать email" для начала';
+            emailInput.value = 'Нажмите "Создать email"';
         }
 
         // Обновление статистики

@@ -190,8 +190,9 @@ body {
 }
 
 .info-text {
-  color: var(--gray);
-  font-size: 0.8rem;
+    color: var(--gray);
+    font-size: 0.75rem;
+    white-space: nowrap;
 }
 
 .email-controls {
@@ -287,15 +288,28 @@ body {
 }
 
 .email-address {
-  flex: 1;
-  font-family: 'Courier New', monospace;
-  font-size: 1.1rem;
-  color: var(--light);
-  background: none;
-  border: none;
-  outline: none;
-  padding: 1rem;
+    flex: 1;
+    font-family: 'Courier New', monospace;
+    font-size: 1rem;
+    color: var(--light);
+    background: none;
+    border: none;
+    outline: none;
+    padding: 1rem;
+    padding-left: 10px;
+    text-align: left;
+    width: auto;
+    min-width: 300px;
 }
+
+.email-address::placeholder {
+    text-align: left;
+    padding-left: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 
 .email-copy-btn {
   background: none;
@@ -898,4 +912,15 @@ body {
   .btn-block {
     width: 100%;
   }
+}
+.email-label {
+    padding-left: 15px;
+}
+.email-input-wrapper {
+    flex: 1;
+    min-width: 0;
+}
+
+.email-input-group {
+    min-width: 405px !important;
 }
