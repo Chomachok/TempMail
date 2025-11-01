@@ -1,0 +1,173 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TempMail - Временная почта на 10 минут</title>
+    <link rel="stylesheet" href="~/css/site.css">
+</head>
+<body>
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <div class="content-grid">
+                <!-- Email Workspace -->
+                <div class="email-workspace">
+                    <div class="workspace-header">
+                        <div class="workspace-title">
+                            <h1>Временный почтовый ящик</h1>
+                            <p class="workspace-subtitle">Защитите ваш основной email от спама</p>
+                        </div>
+                        <div class="workspace-info">
+                            <span class="info-badge">10 минут</span>
+                            <span class="info-text">автоматическое удаление</span>
+                        </div>
+                    </div>
+
+                    <!-- Email Controls -->
+                    <div class="email-controls">
+                        <button class="btn btn-primary" id="generate-btn">
+                            <span class="btn-icon">🔄</span>
+                            <span>Создать email</span>
+                        </button>
+                        <button class="btn btn-outline" id="copy-btn">
+                            <span class="btn-icon">📋</span>
+                            <span>Копировать</span>
+                        </button>
+                        <button class="btn btn-outline" id="refresh-btn">
+                            <span class="btn-icon">🔄</span>
+                            <span>Обновить</span>
+                        </button>
+                    </div>
+
+                    <!-- Email Display -->
+                    <div class="email-display">
+                        <div class="email-input-group">
+                            <label for="email-address" class="email-label">Ваш временный email:</label>
+                            <div class="email-input-wrapper">
+                                <input type="text" class="email-address" id="email-address" 
+                                       readonly placeholder="Нажмите 'Создать email' для начала"
+                                       value="@ViewData["Email"]">
+                            </div>
+                        </div>
+                        <div class="timer-container">
+                            <div class="timer" id="timer">
+                                <span class="timer-icon">⏰</span>
+                                <span class="timer-text">10:00</span>
+                            </div>
+                            <div class="timer-label">Осталось времени</div>
+                        </div>
+                    </div>
+
+                    <!-- Inbox -->
+                    <div class="inbox-section">
+                        <div class="inbox-header">
+                            <div class="inbox-title">
+                                <h2>Входящие письма</h2>
+                                <div class="email-count" id="email-count">0 писем</div>
+                            </div>
+                            <div class="inbox-actions">
+                                <button class="btn btn-sm btn-outline" id="delete-all">
+                                    <span class="btn-icon">🗑️</span>
+                                    <span>Удалить все</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="email-list-container">
+                            <div class="email-list" id="email-list">
+                                <div class="empty-state">
+                                    <div class="empty-icon">📭</div>
+                                    <h3>Пока нет входящих писем</h3>
+                                    <p>Используйте ваш временный email для регистрации на сайтах, и письма появятся здесь автоматически</p>
+                                    <div class="empty-actions">
+                                        <button class="btn btn-outline" id="test-email-btn">
+                                            <span>Отправить тестовое письмо</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Email Content -->
+                    <div class="email-content-section">
+                        <div class="email-content" id="email-content">
+                            <div class="email-content-placeholder">
+                                <div class="placeholder-icon">📧</div>
+                                <h3>Выберите письмо для просмотра</h3>
+                                <p>Нажмите на любое письмо в списке слева, чтобы увидеть его содержимое</p>
+                                <div class="placeholder-features">
+                                    <div class="feature-item">
+                                        <span class="feature-icon">🔒</span>
+                                        <span>Все письма защищены шифрованием</span>
+                                    </div>
+                                    <div class="feature-item">
+                                        <span class="feature-icon">⚡</span>
+                                        <span>Мгновенное получение писем</span>
+                                    </div>
+                                    <div class="feature-item">
+                                        <span class="feature-icon">🕒</span>
+                                        <span>Автоматическое удаление через 10 минут</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sidebar -->
+                <aside class="sidebar">
+                    <!-- Tips -->
+                    <div class="tips-card">
+                        <div class="card-header">
+                            <h3>Полезные советы</h3>
+                        </div>
+                        <div class="tips-list">
+                            <div class="tip-item">
+                                <div class="tip-icon">🔒</div>
+                                <div class="tip-content">
+                                    <strong>Защита от спама</strong>
+                                    <p>Используйте для регистрации на непроверенных сайтах и форумах</p>
+                                </div>
+                            </div>
+                            <div class="tip-item">
+                                <div class="tip-icon">⚡</div>
+                                <div class="tip-content">
+                                    <strong>Мгновенная регистрация</strong>
+                                    <p>Не требует ввода личных данных и подтверждения</p>
+                                </div>
+                            </div>
+                            <div class="tip-item">
+                                <div class="tip-icon">🕒</div>
+                                <div class="tip-content">
+                                    <strong>Автоудаление</strong>
+                                    <p>Почта автоматически удалится через 10 минут</p>
+                                </div>
+                            </div>
+                            <div class="tip-item">
+                                <div class="tip-icon">📧</div>
+                                <div class="tip-content">
+                                    <strong>Без ограничений</strong>
+                                    <p>Создавайте неограниченное количество временных адресов</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </main>
+    
+    <!-- Notification Container -->
+    <div id="notification-container"></div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loading-overlay" style="display: none;">
+        <div class="loading-spinner"></div>
+        <p>Загрузка...</p>
+    </div>
+
+    <!-- <script src="~/js/site.js"></script> -->
+</body>
+</html>

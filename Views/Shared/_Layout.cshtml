@@ -1,0 +1,194 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - TempMail</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body>
+    <!-- Header -->
+    <header class="main-header">
+        <div class="container">
+            <nav class="navbar">
+                <div class="nav-brand">
+                    <a href="~/" class="logo">
+                        <div class="logo-icon">✉</div>
+                        <span class="logo-text">TempMail</span>
+                    </a>
+                </div>
+                
+                <div class="nav-menu" id="nav-menu">
+                    <div class="nav-links">
+                        <a href="~/Home/Features" class="nav-link">Возможности</a>
+                        <a href="~/Home/HowItWorks" class="nav-link">Как работает</a>
+                        <a href="~/Home/Contacts" class="nav-link">Контакты</a>
+                        
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <a href="~/Mail/Inbox" class="nav-link">Мои письма</a>
+                            <a href="~/Account/Profile" class="nav-link">Профиль</a>
+                        }
+                    </div>
+                    
+                    <div class="nav-actions">
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <div class="user-info">
+                                <span class="user-name">@User.Identity.Name</span>
+                                <form asp-controller="Account" asp-action="Logout" method="post" class="logout-form">
+                                    <button type="submit" class="btn btn-outline btn-sm">Выйти</button>
+                                </form>
+                            </div>
+                        }
+                        else
+                        {
+                            <a href="~/Account/Login" class="btn btn-outline">Войти</a>
+                            <a href="~/Account/Register" class="btn btn-primary">Регистрация</a>
+                        }
+                    </div>
+                </div>
+
+                <!-- Mobile menu button -->
+                <button class="mobile-menu-btn" id="mobile-menu-btn">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success">
+                    @TempData["Success"]
+                </div>
+            }
+            
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-error">
+                    @TempData["Error"]
+                </div>
+            }
+
+            @RenderBody()
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-content">
+                <!-- Brand Section -->
+                <div class="footer-section">
+                    <div class="footer-brand">
+                        <div class="logo">
+                            <div class="logo-icon">✉</div>
+                            <span class="logo-text">TempMail</span>
+                        </div>
+                        <p class="footer-description">
+                            Сервис временной электронной почты для защиты вашей приватности 
+                            и борьбы со спамом. Быстро, безопасно, анонимно.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Navigation Section -->
+                <div class="footer-section">
+                    <h4>Навигация</h4>
+                    <ul class="footer-links">
+                        <li><a href="~/Home/Features">Возможности</a></li>
+                        <li><a href="~/Home/HowItWorks">Как это работает</a></li>
+                    </ul>
+                </div>
+
+                <!-- Legal Section -->
+                <div class="footer-section">
+                    <h4>Правовая информация</h4>
+                    <ul class="footer-links">
+                        <li><a href="~/Home/Privacy">Политика конфиденциальности</a></li>
+                        <li><a href="~/Home/Terms">Условия использования</a></li>
+                        <li><a href="~/Home/Cookies">Политика cookies</a></li>
+                    </ul>
+                </div>
+
+                <!-- Support Section -->
+                <div class="footer-section">
+                    <h4>Поддержка</h4>
+                    <ul class="footer-links">
+                        <li><a href="~/Home/Help">Помощь</a></li>
+                        <li><a href="~/Home/Contact">Обратная связь</a></li>
+                        <li><a href="~/Home/Contact">Связаться с нами</a></li>
+                    </ul>
+                    
+                    <div class="footer-contact">
+                        <div class="contact-item">
+                            <span class="contact-icon">📧</span>
+                            <span>support@tempmail.com</span>
+                        </div>
+                        <div class="contact-item">
+                            <span class="contact-icon">🕒</span>
+                            <span>24/7 поддержка</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Bottom -->
+            <div class="footer-bottom">
+                <div class="footer-copyright">
+                    <p>&copy; 2025 TempMail. Все права защищены.</p>
+                </div>
+                <div class="footer-legal">
+                    <a href="~/Home/Privacy">Конфиденциальность</a>
+                    <a href="~/Home/Terms">Условия</a>
+                    <a href="~/Home/Sitemap">Карта сайта</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <!-- <script src="~/js/site.js" asp-append-version="true"></script> -->
+    @await RenderSectionAsync("Scripts", required: false)
+
+    <script>
+        // Mobile menu functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const navMenu = document.getElementById('nav-menu');
+            
+            if (mobileMenuBtn && navMenu) {
+                mobileMenuBtn.addEventListener('click', function() {
+                    navMenu.classList.toggle('active');
+                    mobileMenuBtn.classList.toggle('active');
+                });
+            }
+
+            // Close mobile menu when clicking on a link
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    navMenu.classList.remove('active');
+                    mobileMenuBtn.classList.remove('active');
+                });
+            });
+
+            // Auto-hide alerts
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                setTimeout(() => {
+                    alert.style.opacity = '0';
+                    setTimeout(() => alert.remove(), 300);
+                }, 5000);
+            });
+        });
+    </script>
+</body>
+</html>
