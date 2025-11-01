@@ -1,5 +1,3 @@
-using TempMail.Services;
-
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
@@ -25,9 +23,6 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthorization();
-
-var reciver = new EmailReceiver();
-reciver.ReciveEmails();
 
 app.MapControllerRoute(
     name: "default",
