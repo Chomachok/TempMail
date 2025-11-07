@@ -1,141 +1,232 @@
-﻿class TempMail {
+﻿/* -------------------------------------------------------------
+   TempMail – клиентская часть (исправленная версия)
+   ------------------------------------------------------------- */
+class TempMail {
     constructor() {
-        this.currentEmail = null;
-        this.timerInterval = null;
-        this.timeLeft = 600; // 10 минут
-        this.emails = [];
-        this.stats = {
-            created: 0,
-            received: 0,
-            active: 0
-        };
+        this.currentEmail = null;          // текущий e‑mail (пока пустой)
+        this.timerInterval = null;         // ID setInterval
+        this.timeLeft = 600;               // 10 минут = 600 сек
+        this.emails = [];                  // список писем
+        this.stats = { created: 0, received: 0, active: 0 };
         this.userId = this.getUserId();
 
+        // 1️⃣ Навешиваем обработчики (они работают только после
+        //    того, как страница уже отрисована)
         this.initializeEventListeners();
-        this.loadFromStorage();
+
+        // 2️⃣ Смотрим, пришёл ли уже готовый e‑mail от сервера
+        this.checkServerGeneratedEmail();
+
+        // 3️⃣ Остальные UI‑элементы (список писем, статистика)
         this.updateDisplay();
     }
 
-    // Генерируем уникальный ID пользователя
+    /* ---------- UID пользователя ---------- */
     getUserId() {
-        let userId = localStorage.getItem('tempmail-user-id');
-        if (!userId) {
-            userId = 'user_' + Math.random().toString(36).substr(2, 9);
-            localStorage.setItem('tempmail-user-id', userId);
+        let uid = localStorage.getItem('tempmail-user-id');
+        if (!uid) {
+            uid = 'user_' + Math.random().toString(36).substr(2, 9);
+            localStorage.setItem('tempmail-user-id', uid);
         }
-        return userId;
+        return uid;
     }
 
-    initializeEventListeners() {
-        // Кнопки управления
-        document.getElementById('generate-btn').addEventListener('click', () => this.generateEmail());
-        document.getElementById('copy-btn').addEventListener('click', () => this.copyEmail());
-        document.getElementById('refresh-btn').addEventListener('click', () => this.refreshEmails());
-        document.getElementById('extend-btn').addEventListener('click', () => this.extendTimer());
-        document.getElementById('save-btn').addEventListener('click', () => this.saveEmails());
-        document.getElementById('clear-btn').addEventListener('click', () => this.clearHistory());
-        document.getElementById('new-email-btn').addEventListener('click', () => this.generateEmail());
-        document.getElementById('history-btn').addEventListener('click', () => this.showHistory());
-    }
+    /* ---------- ПРИМЕЧАНИЕ ----------
+       Этот метод **не** генерирует e‑mail, а просто проверяет,
+       существует ли уже готовый адрес, пришедший от сервера. */
+    checkServerGeneratedEmail() {
+        const input = document.getElementById('email-address');
+        if (!input) return;
 
-    generateEmail() {
-        // Проверяем, есть ли уже активная почта
-        if (this.currentEmail && this.timeLeft > 0) {
-            this.showNotification('У вас уже есть активный email адрес', 'error');
-            return;
-        }
+        // Если в input уже есть value – значит сервер отдал e‑mail
+        if (input.value && input.value.trim() !== '') {
+            this.currentEmail = input.value.trim();
 
-        const domains = ['tempmail.com', 'mailtemp.net', 'spam4.me'];
-        const randomId = Math.random().toString(36).substring(2, 10);
-        const domain = domains[Math.floor(Math.random() * domains.length)];
+            // Таймер стартует сразу (полные 10 минут)
+            this.timeLeft = 600;
+            this.startTimer();
 
-        this.currentEmail = `${randomId}@${domain}`;
-        this.timeLeft = 600;
-        this.emails = [];
-        this.stats.created++;
-
-        this.startTimer();
-        this.updateDisplay();
-        this.saveToStorage();
-
-        this.showNotification('Новый email создан!');
-    }
-
-    startTimer() {
-        clearInterval(this.timerInterval);
-        this.timerInterval = setInterval(() => {
-            this.timeLeft--;
-            this.updateTimerDisplay();
-
-            if (this.timeLeft <= 0) {
-                this.expireEmail();
-            }
-        }, 1000);
-    }
-
-    updateTimerDisplay() {
-        const timer = document.getElementById('timer');
-        const minutes = Math.floor(this.timeLeft / 60);
-        const seconds = this.timeLeft % 60;
-
-        timer.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-
-        // Изменение цвета при малом времени
-        if (this.timeLeft < 60) {
-            timer.classList.add('warning');
+            // Показываем таймер и активные кнопки
+            this.toggleTimerVisibility(true);
+            this.toggleControlsVisibility(true);
         } else {
-            timer.classList.remove('warning');
+            // Email ещё не создан – скрываем таймер и лишние кнопки
+            this.toggleTimerVisibility(false);
+            this.toggleControlsVisibility(false);
         }
     }
 
-    expireEmail() {
-        clearInterval(this.timerInterval);
-        document.getElementById('email-address').value = 'Время истекло. Создайте новый email.';
-        document.getElementById('timer').textContent = '00:00';
-        this.currentEmail = null;
-        this.saveToStorage();
-
-        this.showNotification('Время вашего временного email истекло');
-    }
-
-    copyEmail() {
-        if (!this.currentEmail) {
-            this.showNotification('Сначала создайте email', 'error');
-            return;
-        }
-
-        navigator.clipboard.writeText(this.currentEmail).then(() => {
-            this.showNotification('Email скопирован в буфер обмена');
+    /* ---------- Навешивание обработчиков ---------- */
+    initializeEventListeners() {
+        const genBtn = document.getElementById('generate-btn');
+        if (genBtn) genBtn.addEventListener('click', () => {
+            /* Кнопка «Создать email» отправляет форму,
+               поэтому здесь ничего не делаем – действие происходит
+               на сервере, а после перезагрузки страницы
+               `checkServerGeneratedEmail()` обработает результат. */
         });
+
+        const refBtn = document.getElementById('refresh-btn');
+        if (refBtn) refBtn.addEventListener('click', () => this.refreshEmails());
+
+        const copyBtn = document.getElementById('copy-btn');
+        if (copyBtn) copyBtn.addEventListener('click', () => this.copyEmail());
+
+        const resetBtn = document.getElementById('reset-btn');
+        if (resetBtn) resetBtn.addEventListener('click', () => this.resetEmail());
+
+        const deleteAllBtn = document.getElementById('delete-all');
+        if (deleteAllBtn) deleteAllBtn.addEventListener('click', () => this.clearAll());
+
+        const testEmailBtn = document.getElementById('test-email-btn');
+        if (testEmailBtn) testEmailBtn.addEventListener('click', () => this.sendTestMail());
     }
 
+    /* ---------- Перезапуск таймера (обновить email) ---------- */
     refreshEmails() {
         if (!this.currentEmail) {
             this.showNotification('Сначала создайте email', 'error');
             return;
         }
 
-        // Имитация обновления писем
-        document.getElementById('refresh-btn').classList.add('loading');
-        document.getElementById('refresh-btn').innerHTML = '<span class="spinner"></span> Обновление...';
+        // Сбрасываем время до новых 10 минут
+        this.timeLeft = 600;
+        this.updateTimerDisplay();
+
+        // Имитируем запрос новых писем (можно заменить реальным fetch)
+        const btn = document.getElementById('refresh-btn');
+        if (btn) {
+            btn.classList.add('loading');
+            btn.innerHTML = '<span class="spinner"></span> Обновление...';
+        }
 
         setTimeout(() => {
-            // Только реальные письма, без спама
-            this.checkForRealEmails();
-            document.getElementById('refresh-btn').classList.remove('loading');
-            document.getElementById('refresh-btn').innerHTML = '<span>Обновить</span>';
+            this.checkForRealEmails();               // ваш метод проверки реальных писем
+            if (btn) {
+                btn.classList.remove('loading');
+                btn.innerHTML = '<span class="btn-icon">🔄</span> Обновить email';
+            }
+            this.showNotification('Обновление завершено');
         }, 1000);
     }
 
-    // Проверка реальных писем (без спама)
+    /* ---------- Удалить текущий ящик ---------- */
+    resetEmail() {
+        if (!this.currentEmail) {
+            this.showNotification('Почты нет', 'error');
+            return;
+        }
+        clearInterval(this.timerInterval);
+        this.currentEmail = null;
+        this.timeLeft = 0;
+        this.emails = [];
+        this.updateDisplay();
+        this.saveToStorage();
+
+        // Сразу скрываем таймер и управ.кнопки
+        this.toggleTimerVisibility(false);
+        this.toggleControlsVisibility(false);
+        this.showNotification('Email удалён');
+    }
+
+    /* ---------- Запуск таймера ---------- */
+    startTimer() {
+        clearInterval(this.timerInterval);
+        this.timerInterval = setInterval(() => {
+            this.timeLeft--;
+            this.updateTimerDisplay();
+
+            if (this.timeLeft <= 0) this.expireEmail();
+        }, 1000);
+    }
+
+    /* ---------- Отображение таймера ---------- */
+    updateTimerDisplay() {
+        const timerValue = document.getElementById('timer-value');
+        const timerBox   = document.getElementById('timer');
+
+        const minutes = Math.floor(this.timeLeft / 60);
+        const seconds = this.timeLeft % 60;
+        timerValue.textContent =
+            `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+        // если осталось < 1 минута – визуальное предупреждение
+        if (this.timeLeft < 60) timerBox.classList.add('warning');
+        else timerBox.classList.remove('warning');
+    }
+
+    /* ---------- Истечение времени ---------- */
+    expireEmail() {
+        clearInterval(this.timerInterval);
+        const input = document.getElementById('email-address');
+        if (input) input.value = '';
+        this.timeLeft = 0;
+        this.updateTimerDisplay();   // покажет 00:00
+        this.currentEmail = null;
+        this.saveToStorage();
+
+        this.toggleTimerVisibility(false);
+        this.toggleControlsVisibility(false);
+        this.showNotification('Время вашего email истекло', 'error');
+    }
+
+    /* ---------- Копировать в буфер ---------- */
+    copyEmail() {
+        if (!this.currentEmail) {
+            this.showNotification('Сначала создайте email', 'error');
+            return;
+        }
+        navigator.clipboard.writeText(this.currentEmail)
+            .then(() => this.showNotification('Email скопирован в буфер обмена'))
+            .catch(() => this.showNotification('Ошибка копирования', 'error'));
+    }
+
+    /* ---------- Удалить все письма ---------- */
+    clearAll() {
+        if (this.emails.length === 0) {
+            this.showNotification('Писем нет', 'error');
+            return;
+        }
+        if (confirm('Точно удалить все письма?')) {
+            this.emails = [];
+            this.updateEmailList();
+            this.showNotification('Все письма удалены');
+            this.saveToStorage();
+        }
+    }
+
+    /* ---------- Тестовое письмо (имитация) ---------- */
+    sendTestMail() {
+        if (!this.currentEmail) {
+            this.showNotification('Сначала создайте email', 'error');
+            return;
+        }
+
+        const test = {
+            id: Date.now(),
+            from: 'test@example.com',
+            subject: 'Тестовое письмо',
+            preview: 'Это тестовое письмо, созданное для проверки работы TempMail.',
+            time: new Date().toLocaleTimeString(),
+            content: '<p>Привет! Это тестовое письмо.</p>',
+            unread: true
+        };
+
+        this.emails.unshift(test);
+        this.stats.received++;
+        this.updateEmailList();
+        this.updateDisplay();
+        this.saveToStorage();
+        this.showNotification('Тестовое письмо получено');
+    }
+
+    /* ---------- Проверка реальных писем (ваш код) ---------- */
     checkForRealEmails() {
         if (!this.currentEmail) return;
 
-        // Имитация получения реальных писем (только если пользователь действительно использовал email)
         const hasRealActivity = localStorage.getItem(`user-activity-${this.userId}`);
 
         if (hasRealActivity) {
-            // Только реальные письма от сервисов, где пользователь зарегистрировался
             const realEmails = this.getRealEmails();
             if (realEmails.length > 0) {
                 this.emails = [...realEmails, ...this.emails];
@@ -151,7 +242,6 @@
         }
     }
 
-    // Получение реальных писем (без спама)
     getRealEmails() {
         const realEmails = [];
         const activity = JSON.parse(localStorage.getItem(`user-activity-${this.userId}`) || '[]');
@@ -159,88 +249,37 @@
         activity.forEach(service => {
             realEmails.push({
                 id: Date.now() + Math.random(),
-                from: service + '@service.com',
+                from: `${service}@service.com`,
                 subject: `Подтверждение регистрации на ${service}`,
                 preview: 'Для завершения регистрации перейдите по ссылке в письме...',
                 time: new Date().toLocaleTimeString(),
-                content: `<p>Спасибо за регистрацию на ${service}!</p><p>Для завершения регистрации перейдите по ссылке ниже:</p><p><a href="#">Подтвердить email</a></p>`,
+                content: `<p>Спасибо за регистрацию на ${service}!</p>
+                          <p>Для завершения регистрации перейдите по ссылке ниже:</p>
+                          <p><a href="#">Подтвердить email</a></p>`,
                 unread: true
             });
         });
-
         return realEmails;
     }
 
-    extendTimer() {
-        if (!this.currentEmail) {
-            this.showNotification('Сначала создайте email', 'error');
-            return;
-        }
-
-        this.timeLeft += 600; // +10 минут
-        this.updateTimerDisplay();
-        this.showNotification('Время увеличено на 10 минут');
-    }
-
-    saveEmails() {
-        if (this.emails.length === 0) {
-            this.showNotification('Нет писем для сохранения', 'error');
-            return;
-        }
-
-        // Имитация сохранения
-        this.showNotification('Письма сохранены в историю');
-    }
-
-    clearHistory() {
-        if (confirm('Вы уверены, что хотите очистить историю писем?')) {
-            this.emails = [];
-            this.updateDisplay();
-            this.showNotification('История писем очищена');
-        }
-    }
-
-    showHistory() {
-        this.showNotification('История временных адресов');
-    }
-
-    updateDisplay() {
-        // Обновление email адреса
-        const emailInput = document.getElementById('email-address');
-        if (this.currentEmail) {
-            emailInput.value = this.currentEmail;
-        } else {
-            emailInput.value = 'Нажмите "Создать email"';
-        }
-
-        // Обновление статистики
-        document.getElementById('stats-created').textContent = this.stats.created;
-        document.getElementById('stats-received').textContent = this.stats.received;
-        document.getElementById('stats-active').textContent = this.currentEmail ? 1 : 0;
-
-        // Обновление списка писем
-        this.updateEmailList();
-    }
-
+    /* ---------- Список писем ---------- */
     updateEmailList() {
-        const emailList = document.getElementById('email-list');
-        const emailCount = document.getElementById('email-count');
+        const list = document.getElementById('email-list');
+        const count = document.getElementById('email-count');
 
         if (this.emails.length === 0) {
-            emailList.innerHTML = `
+            list.innerHTML = `
                 <div class="empty-state">
-                    <div class="icon">📭</div>
+                    <div class="empty-icon">📭</div>
                     <p>Пока нет входящих писем</p>
                     <small>Письма появятся здесь после использования вашего временного email</small>
-                </div>
-            `;
-            emailCount.textContent = '0';
+                </div>`;
+            if (count) count.textContent = '0';
             return;
         }
 
-        emailCount.textContent = this.emails.length.toString();
-
-        emailList.innerHTML = this.emails.map(email => `
+        if (count) count.textContent = this.emails.length;
+        list.innerHTML = this.emails.map(email => `
             <div class="email-item ${email.unread ? 'unread' : ''}" data-email-id="${email.id}">
                 <div class="email-header">
                     <div class="email-subject">${email.subject}</div>
@@ -251,12 +290,13 @@
             </div>
         `).join('');
 
-        // Добавляем обработчики для писем
-        emailList.querySelectorAll('.email-item').forEach(item => {
+        // привязываем к каждому письму открытие
+        list.querySelectorAll('.email-item').forEach(item => {
             item.addEventListener('click', () => this.showEmailContent(item.dataset.emailId));
         });
     }
 
+    /* ---------- Показ письма в правой части ---------- */
     showEmailContent(emailId) {
         const email = this.emails.find(e => e.id == emailId);
         if (!email) return;
@@ -264,52 +304,43 @@
         const content = document.getElementById('email-content');
         content.innerHTML = `
             <h3>${email.subject}</h3>
-            <div style="color: var(--gray); margin: 10px 0; font-size: 0.9rem;">
+            <div style="color: var(--gray); margin:10px 0; font-size:0.9rem;">
                 От: ${email.from}<br>
                 Время: ${email.time}
             </div>
-            <div style="margin-top: 20px; line-height: 1.6;">
+            <div style="margin-top:20px; line-height:1.6;">
                 ${email.content}
             </div>
         `;
         content.classList.add('active');
 
-        // Помечаем как прочитанное
+        // помечаем как прочитанное и перерисовываем список
         email.unread = false;
         this.updateEmailList();
     }
 
+    /* ---------- Уведомления ---------- */
     showNotification(message, type = 'success') {
-        // Создаем временное уведомление
-        const notification = document.createElement('div');
-        notification.className = `notification ${type === 'error' ? 'error' : ''}`;
-        notification.textContent = message;
-
-        document.body.appendChild(notification);
-
-        setTimeout(() => {
-            notification.remove();
-        }, 3000);
+        const n = document.createElement('div');
+        n.className = `notification ${type === 'error' ? 'error' : ''}`;
+        n.textContent = message;
+        document.body.appendChild(n);
+        setTimeout(() => n.remove(), 3000);
     }
 
+    /* ---------- Сохранить / загрузить состояние ---------- */
     loadFromStorage() {
-        // Загрузка из localStorage для текущего пользователя
-        const saved = localStorage.getItem(`tempmail-data-${this.userId}`);
-        if (saved) {
-            const data = JSON.parse(saved);
-            this.currentEmail = data.currentEmail;
-            this.timeLeft = data.timeLeft;
-            this.emails = data.emails || [];
-            this.stats = data.stats || this.stats;
+        const raw = localStorage.getItem(`tempmail-data-${this.userId}`);
+        if (!raw) return;
 
-            if (this.currentEmail && this.timeLeft > 0) {
-                this.startTimer();
-            }
-        }
+        const data = JSON.parse(raw);
+        // **Не** восстанавливаем currentEmail и timeLeft – иначе email появится без нажатия.
+        this.emails = data.emails || [];
+        this.stats  = data.stats  || this.stats;
+        this.updateEmailList();
     }
 
     saveToStorage() {
-        // Сохранение в localStorage для текущего пользователя
         const data = {
             currentEmail: this.currentEmail,
             timeLeft: this.timeLeft,
@@ -318,26 +349,54 @@
         };
         localStorage.setItem(`tempmail-data-${this.userId}`, JSON.stringify(data));
     }
+
+    /* ---------- Обновление UI (список, таймер, кнопки) ---------- */
+    updateDisplay() {
+        const input = document.getElementById('email-address');
+        // если email ещё нет – оставляем пустым, чтобы отобразился placeholder
+        if (input) input.value = this.currentEmail ? this.currentEmail : '';
+
+        const sCreated  = document.getElementById('stats-created');
+        const sReceived = document.getElementById('stats-received');
+        const sActive   = document.getElementById('stats-active');
+        if (sCreated)  sCreated.textContent  = this.stats.created;
+        if (sReceived) sReceived.textContent = this.stats.received;
+        if (sActive)   sActive.textContent   = this.currentEmail ? 1 : 0;
+
+        this.updateEmailList();
+    }
+
+    /* ---------- Показ/скрытие таймера ---------- */
+    toggleTimerVisibility(isVisible) {
+        const timerBox = document.getElementById('timer');
+        if (!timerBox) return;
+        timerBox.style.display = isVisible ? 'flex' : 'none';
+        if (isVisible) this.updateTimerDisplay(); // сразу обновим цифры
+    }
+
+    /* ---------- Показ/скрытие управ.кнопок ---------- */
+    toggleControlsVisibility(isActive) {
+        // Кнопка «Создать» показывается, когда email НЕ создан
+        const genBtn    = document.getElementById('generate-btn');
+        const copyBtn   = document.getElementById('copy-btn');
+        const refreshBtn= document.getElementById('refresh-btn');
+        const resetBtn  = document.getElementById('reset-btn');
+
+        if (isActive) {
+            if (genBtn)    genBtn.style.display    = 'none';
+            if (copyBtn)   copyBtn.style.display   = 'inline-flex';
+            if (refreshBtn)refreshBtn.style.display = 'inline-flex';
+            if (resetBtn)  resetBtn.style.display   = 'inline-flex';
+        } else {
+            if (genBtn)    genBtn.style.display    = 'inline-flex';
+            if (copyBtn)   copyBtn.style.display   = 'none';
+            if (refreshBtn)refreshBtn.style.display = 'none';
+            if (resetBtn)  resetBtn.style.display   = 'none';
+        }
+    }
 }
 
-// Инициализация при загрузке страницы
 document.addEventListener('DOMContentLoaded', () => {
-    window.tempMail = new TempMail();
+    window.tempMail = new TempMail();   // создаём объект, он сразу проверит,
+                                        // появился ли уже email от сервера
 });
-
-// Имитация использования email на других сайтах
-function simulateEmailUsage(serviceName) {
-    if (!window.tempMail || !window.tempMail.currentEmail) {
-        alert('Сначала создайте временный email');
-        return;
-    }
-
-    // Сохраняем активность пользователя
-    let activity = JSON.parse(localStorage.getItem(`user-activity-${window.tempMail.userId}`) || '[]');
-    if (!activity.includes(serviceName)) {
-        activity.push(serviceName);
-        localStorage.setItem(`user-activity-${window.tempMail.userId}`, JSON.stringify(activity));
-    }
-
-    alert(`Email ${window.tempMail.currentEmail} использован для регистрации на ${serviceName}`);
-}
