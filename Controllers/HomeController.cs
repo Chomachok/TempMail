@@ -7,7 +7,6 @@ public class HomeController : Controller
 {
     private const string SessionEmailKey = "UserEmail";
     private const string SessionEmailCreatedKey = "EmailCreated";
-    private readonly TimeSpan _emailLifeTime = TimeSpan.FromMinutes(10);
     private readonly EmailGenerator _emailGenerator = new();
     private string? _email;
 
@@ -36,7 +35,7 @@ public class HomeController : Controller
     public IActionResult GenerateEmail()
     {
         _email = _emailGenerator.GenerateEmail();
-        // logger.LogInformation("Created email {Email}", _email);
+        //logger.LogInformation("Created email {Email}", _email);
         
         HttpContext.Session.SetString(SessionEmailKey, _email);
         HttpContext.Session.SetString(SessionEmailCreatedKey, "true");
