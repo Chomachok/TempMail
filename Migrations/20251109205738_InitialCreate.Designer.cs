@@ -12,7 +12,7 @@ using TempMail.Data;
 namespace TempMail.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251107214222_InitialCreate")]
+    [Migration("20251109205738_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -45,9 +45,7 @@ namespace TempMail.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("DiesAt")
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("timestamp with time zone")
-                        .HasComputedColumnSql("\"CreatedAt\" + interval '10 minutes'", false);
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("UserId")
                         .HasColumnType("integer");

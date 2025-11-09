@@ -266,11 +266,6 @@ ServiceFabricBackup/
 *.ldf
 *.ndf
 
-# 
-*.db
-*.sqlite
-*.sqlite3
-
 # Business Intelligence projects
 *.rdl.data
 *.bim.layout
@@ -366,3 +361,11 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# Custom
+*.db
+*.sqlite
+*.sqlite3
+.idea/
+obj/
+appsettings.Development.json

@@ -32,10 +32,6 @@ public class AppDbContext : DbContext
             .HasIndex(e => e.Address)
             .IsUnique();
 
-        modelBuilder.Entity<Email>()
-            .Property(e => e.DiesAt)
-            .HasComputedColumnSql("\"CreatedAt\" + interval '10 minutes'", stored: false);
-
         // === LETTER ===
         modelBuilder.Entity<Letter>()
             .HasOne(l => l.Email)

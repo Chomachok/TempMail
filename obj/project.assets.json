@@ -480,6 +480,12 @@
           }
         }
       },
+      "Microsoft.EntityFrameworkCore.Tools/9.0.10": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.EntityFrameworkCore.Design": "9.0.10"
+        }
+      },
       "Microsoft.Extensions.Caching.Abstractions/9.0.10": {
         "type": "package",
         "dependencies": {
@@ -2183,6 +2189,31 @@
         "microsoft.entityframeworkcore.relational.nuspec"
       ]
     },
+    "Microsoft.EntityFrameworkCore.Tools/9.0.10": {
+      "sha512": "lFM5KSu1CCla1+wzhjwo5Ex/idUxbdZApKD9yNUbmcCBgW1SJ8E8mz7ECOf5gaCjjjII8f5ztJAmUt5Ez8koAQ==",
+      "type": "package",
+      "path": "microsoft.entityframeworkcore.tools/9.0.10",
+      "hasTools": true,
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "Icon.png",
+        "docs/PACKAGE.md",
+        "microsoft.entityframeworkcore.tools.9.0.10.nupkg.sha512",
+        "microsoft.entityframeworkcore.tools.nuspec",
+        "tools/EntityFrameworkCore.PS2.psd1",
+        "tools/EntityFrameworkCore.PS2.psm1",
+        "tools/EntityFrameworkCore.psd1",
+        "tools/EntityFrameworkCore.psm1",
+        "tools/about_EntityFrameworkCore.help.txt",
+        "tools/init.ps1",
+        "tools/net472/any/ef.exe",
+        "tools/net472/win-arm64/ef.exe",
+        "tools/net472/win-x86/ef.exe",
+        "tools/netcoreapp2.0/any/ef.dll",
+        "tools/netcoreapp2.0/any/ef.runtimeconfig.json"
+      ]
+    },
     "Microsoft.Extensions.Caching.Abstractions/9.0.10": {
       "sha512": "cL6iTxgJ4u5zP3eFOdBiDAtmE/B2WKTRhyJfEne7n6qvHpsMwwIDxljs210mWSO1ucBy7lR1Lo7/7kjeZeLcqQ==",
       "type": "package",
@@ -3133,35 +3164,29 @@
       "MailKit >= 4.14.1",
       "Microsoft.EntityFrameworkCore >= 9.0.10",
       "Microsoft.EntityFrameworkCore.Design >= 9.0.10",
+      "Microsoft.EntityFrameworkCore.Tools >= 9.0.10",
       "Npgsql.EntityFrameworkCore.PostgreSQL >= 9.0.4"
     ]
   },
   "packageFolders": {
-    "C:\\Users\\New\\.nuget\\packages\\": {},
-    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+    "/home/chel/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\New\\Desktop\\TempMail\\TempMail\\TempMail.csproj",
+      "projectUniqueName": "/home/chel/Рабочий стол/twmpMail/TempMail/TempMail.csproj",
       "projectName": "TempMail",
-      "projectPath": "C:\\Users\\New\\Desktop\\TempMail\\TempMail\\TempMail.csproj",
-      "packagesPath": "C:\\Users\\New\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\New\\Desktop\\TempMail\\TempMail\\obj\\",
+      "projectPath": "/home/chel/Рабочий стол/twmpMail/TempMail/TempMail.csproj",
+      "packagesPath": "/home/chel/.nuget/packages/",
+      "outputPath": "/home/chel/Рабочий стол/twmpMail/TempMail/obj/",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-      ],
       "configFilePaths": [
-        "C:\\Users\\New\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "/home/chel/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -3174,13 +3199,7 @@
         "warnAsError": [
           "NU1605"
         ]
-      },
-      "restoreAuditProperties": {
-        "enableAudit": "true",
-        "auditLevel": "low",
-        "auditMode": "direct"
-      },
-      "SdkAnalysisLevel": "9.0.300"
+      }
     },
     "frameworks": {
       "net8.0": {
@@ -3195,6 +3214,12 @@
             "version": "[9.0.10, )"
           },
           "Microsoft.EntityFrameworkCore.Design": {
+            "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+            "suppressParent": "All",
+            "target": "Package",
+            "version": "[9.0.10, )"
+          },
+          "Microsoft.EntityFrameworkCore.Tools": {
             "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
             "suppressParent": "All",
             "target": "Package",
@@ -3224,7 +3249,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.305/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/var/snap/dotnet/common/dotnet/sdk/8.0.121/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

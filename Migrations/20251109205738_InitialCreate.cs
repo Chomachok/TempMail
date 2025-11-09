@@ -35,7 +35,7 @@ namespace TempMail.Migrations
                     UserId = table.Column<int>(type: "integer", nullable: false),
                     Address = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    DiesAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, computedColumnSql: "\"CreatedAt\" + interval '10 minutes'", stored: false),
+                    DiesAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Alive = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>

@@ -23,12 +23,16 @@ public class Email
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     [Required]
-    public DateTime DiesAt { get; set; } = DateTime.UtcNow.AddMinutes(10);
+    public DateTime DiesAt { get; set; } 
 
     [Required]
     public bool Alive { get; set; } = true;
 
-    // Навигационные свойства
     public User User { get; set; } = null!;
     public List<Letter> Letters { get; set; } = new();
+
+    public void SetDeathTime(int minutes = 10)
+    {
+        DiesAt = CreatedAt.AddMinutes(minutes);
+    }
 }

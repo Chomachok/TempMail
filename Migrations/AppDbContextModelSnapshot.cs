@@ -42,9 +42,7 @@ namespace TempMail.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("DiesAt")
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("timestamp with time zone")
-                        .HasComputedColumnSql("\"CreatedAt\" + interval '10 minutes'", false);
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
