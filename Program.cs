@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using System;
 using TempMail.Data;
+using TempMail.Smtp;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +9,8 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddHostedService<SmtpHostedService>();
 
 builder.Services.AddSession(options =>
 {
