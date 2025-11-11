@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using System;
 using TempMail.Data;
+using TempMail.Services;
 using TempMail.Smtp;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,6 +19,8 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
+
+builder.Services.AddScoped<DbManagerService>();
 
 var app = builder.Build();
 

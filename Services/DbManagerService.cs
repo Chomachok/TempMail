@@ -3,9 +3,8 @@ using TempMail.Models;
 
 namespace TempMail.Services;
 
-public class DbManagerService
+public class DbManagerService(AppDbContext context)
 {
-    private static readonly AppDbContext Context = null!;
     
     public async Task AddUserAsync(Guid sessionId, Email email)
     {
@@ -16,15 +15,15 @@ public class DbManagerService
             Email = email
         };
 
-        Context.Users.Add(user);
+        context.Users.Add(user);
 
-        await Context.SaveChangesAsync();
+        await context.SaveChangesAsync();
     }
 
     public async Task AddEmailAsync(Email email)
     {
-        Context.Emails.Add(email);
+        context.Emails.Add(email);
 
-        await Context.SaveChangesAsync();
+        await context.SaveChangesAsync();
     }
 }
