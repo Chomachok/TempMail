@@ -12,7 +12,8 @@
           "Microsoft.EntityFrameworkCore": "9.0.10",
           "Microsoft.EntityFrameworkCore.Design": "9.0.10",
           "Microsoft.EntityFrameworkCore.Tools": "9.0.10",
-          "Npgsql.EntityFrameworkCore.PostgreSQL": "9.0.4"
+          "Npgsql.EntityFrameworkCore.PostgreSQL": "9.0.4",
+          "SmtpServer": "11.0.0"
         },
         "runtime": {
           "TempMail.dll": {}
@@ -567,6 +568,17 @@
           }
         }
       },
+      "SmtpServer/11.0.0": {
+        "dependencies": {
+          "System.IO.Pipelines": "9.0.10"
+        },
+        "runtime": {
+          "lib/netstandard2.1/SmtpServer.dll": {
+            "assemblyVersion": "11.0.0.0",
+            "fileVersion": "11.0.0.0"
+          }
+        }
+      },
       "System.CodeDom/6.0.0": {
         "runtime": {
           "lib/net6.0/System.CodeDom.dll": {
@@ -935,6 +947,13 @@
       "sha512": "sha512-mw5vcY2IEc7L+IeGrxpp/J5OSnCcjkjAgJYCm/eD52wpZze8zsSifdqV7zXslSMmfJG2iIUGZyo3KuDtEFKwMQ==",
       "path": "npgsql.entityframeworkcore.postgresql/9.0.4",
       "hashPath": "npgsql.entityframeworkcore.postgresql.9.0.4.nupkg.sha512"
+    },
+    "SmtpServer/11.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-retmxNh3frBhwqlXoblO595at6/B/MTLW/Fa3XnXlrJMpF2KAhndxno9ws6y+dsSVwrYkLGRhrnLJcK3CuJbnQ==",
+      "path": "smtpserver/11.0.0",
+      "hashPath": "smtpserver.11.0.0.nupkg.sha512"
     },
     "System.CodeDom/6.0.0": {
       "type": "package",

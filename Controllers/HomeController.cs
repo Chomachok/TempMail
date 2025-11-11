@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using TempMail.Services;
+using TempMail.Models;
 
 namespace TempMail.Controllers;
 
@@ -8,7 +9,9 @@ public class HomeController : Controller
     private const string SessionEmailKey = "UserEmail";
     private const string SessionEmailCreatedKey = "EmailCreated";
     private readonly EmailGenerator _emailGenerator = new();
-    private string? _email;
+    private Email _email = null!;
+    private readonly DbManagerService _dbManager = null!;
+    private Guid _sessionId;
 
     public IActionResult Index()
     {
@@ -18,6 +21,9 @@ public class HomeController : Controller
         {
             ViewData["Email"] = HttpContext.Session.GetString(SessionEmailKey);
             ViewData["ShowTimer"] = true;
+            _sessionId = Guid.Parse(HttpContext.Session.Id);
+            _dbManager.AddUserAsync(_sessionId, _email);
+            _dbManager.AddEmailAsync(_email);
         }
         else
         {
@@ -27,17 +33,14 @@ public class HomeController : Controller
 
         return View();
     }
-
-    [NonAction]
-    public string? GetEmail() => _email;
     
     [HttpPost]
     public IActionResult GenerateEmail()
     {
-        _email = _emailGenerator.GenerateEmail();
+        _email = _emailGenerator.GenerateEmail(_sessionId);
         //logger.LogInformation("Created email {Email}", _email);
         
-        HttpContext.Session.SetString(SessionEmailKey, _email);
+        HttpContext.Session.SetString(SessionEmailKey, _email.Address);
         HttpContext.Session.SetString(SessionEmailCreatedKey, "true");
         
         return RedirectToAction("Index");
@@ -55,9 +58,9 @@ public class HomeController : Controller
     [HttpPost]
     public IActionResult RefreshEmail()
     {
-        var email = _emailGenerator.GenerateEmail();
+        var email = _emailGenerator.GenerateEmail(_sessionId);
         
-        HttpContext.Session.SetString(SessionEmailKey, email);
+        HttpContext.Session.SetString(SessionEmailKey, _email.Address);
         HttpContext.Session.SetString(SessionEmailCreatedKey, "true");
 
         return RedirectToAction("Index");
